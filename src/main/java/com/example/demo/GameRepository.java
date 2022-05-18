@@ -4,12 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.domain.GameAccount;
+import com.example.demo.domain.GameConfig;
 
 @Component
 public class GameRepository {
@@ -17,28 +19,32 @@ public class GameRepository {
 	@Autowired
 	private GamePersistent gamePersist;
 
+	@Autowired
+	private GameConfigPersistent gameConfigPersist;
+
+	private static final int APP_ID = 1;
 	private Random random = new Random();
+	
+	private final Map<Integer, GameConfig> cache = new ConcurrentHashMap<>();
 
-	public GameAccount handleResult(String username) {
-		Map<String, Integer> config = gamePersist.getAllConfig();
-		if (config == null) {
-			return null;
+	private GameConfig getConfig(final int appId) {
+		GameConfig result = cache.get(appId);
+		if (result != null) {
+			return result;
 		}
-		List<Integer> cards = random.ints(0, 9).limit(config.getOrDefault("cards_size", 0)).boxed().collect(Collectors.toList());
-
-		int numThreeCard = calNumOfThreeCard(config.getOrDefault("bonus_three_card", 3), cards);
-		int chipAward = numThreeCard * config.getOrDefault("award_three_card", 0);
-
-		return handleUpsert(username, numThreeCard, chipAward);
+		result = gameConfigPersist.getConfigByAppId(APP_ID);
+		cache.put(appId, result);
+		return result;
 	}
+	
+	public GameAccount handleResult(String username) {
+		GameConfig config = getConfig(APP_ID);
+		List<Integer> cards = random.ints(0, 9).limit(config.cardsSize).boxed().collect(Collectors.toList());
 
-	public GameAccount handleUpsert(String username, int numTreeCard, int chipAward) {
-		Integer gameId = gamePersist.upsert(username, numTreeCard, chipAward);
-		if (gameId == null) {
-			return null;
-		}
+		int numThreeCard = calNumOfThreeCard(config.bonusThreeCard, cards);
+		int chipAward = numThreeCard * config.awardThreeCard;
 
-		return gamePersist.findGameById(gameId);
+		return gamePersist.upsert(username, numThreeCard, chipAward, APP_ID);
 	}
 
 	public int calNumOfThreeCard(final int bonusThreeCard, List<Integer> cards) {

@@ -2,28 +2,18 @@ package com.example.demo.domain;
 
 public class GameConfig {
 
-	private Long id;
-	private String key;
-	private Integer value;
-
-	public Long getId() {
-		return id;
-	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public Integer getValue() {
-		return value;
-	}
-
-	public void setValue(Integer value) {
-		this.value = value;
+	public final int appId;
+	public final Integer cardsSize;
+	public final Integer awardThreeCard;
+	public final Integer bonusThreeCard;
+	public final Integer maxTicket;
+	
+	public GameConfig(int appId, int cardsSize, int awardThreeCard, int bonusThreeCard, int maxTicket) {
+		this.appId = appId;
+		this.cardsSize = cardsSize;
+		this.awardThreeCard = awardThreeCard;
+		this.bonusThreeCard = bonusThreeCard;
+		this.maxTicket = maxTicket;
 	}
 
 }

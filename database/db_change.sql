@@ -1,26 +1,23 @@
 --create database gamedb;
 --use gamedb;
 
-create table if not exists game_config (
-	id bigserial not null,
-	"key" varchar(255) not null,
-	value int not null default 0	
+create table game_config (
+	app_id int not null,	
+	cards_size int null,
+	award_three_card int null,
+	bonus_three_card int null,
+	max_ticket int null
 );
-alter table game_config add  CONSTRAINT pk_game_config PRIMARY KEY (id);
+ALTER TABLE game_config ADD CONSTRAINT pk_game_config PRIMARY KEY (app_id);
+insert into game_config (app_id, cards_size, award_three_card, bonus_three_card, max_ticket) values (1, 20, 1000, 3, 100);
 
-insert into game_config ("key", value) values ('cards_size', 20);
-insert into game_config ("key", value) values ('award_three_card', 1000);
-insert into game_config ("key", value) values ('bonus_three_card', 3);
-insert into game_config ("key", value) values ('max_ticket', 100);
-
-create table if not exists game_account (
-	id bigserial not null, 
+create table game_account (
+	id serial not null, 
 	username varchar(255) not null,
 	usergamecount int4 not null,
 	chip int4 not null default 0,
 	numthreecard int4 not null default 0
-	
 );
 
 alter table game_account add  CONSTRAINT pk_game_account PRIMARY KEY (id);
-alter table game_account add  CONSTRAINT uc_user_game UNIQUE (username, usergamecount);
+alter table game_account add  CONSTRAINT fk_game_acccount_username_game UNIQUE (username, usergamecount);
