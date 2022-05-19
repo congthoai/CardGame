@@ -23,7 +23,8 @@ public class GameConfigPersistent {
 	public class GameConfigMapper implements RowMapper<GameConfig> {
 		@Override
 		public GameConfig mapRow(ResultSet rs, int rowNum) throws SQLException {
-			return new GameConfig(rs.getInt("app_id"), rs.getInt("cards_size"), rs.getInt("award_three_card"), rs.getInt("bonus_three_card"), rs.getInt("max_ticket"));
+			return new GameConfig(rs.getInt("app_id"), rs.getInt("cards_size"), rs.getInt("award_three_card"),
+					rs.getInt("bonus_three_card"), rs.getInt("max_ticket"));
 		}
 	}
 }

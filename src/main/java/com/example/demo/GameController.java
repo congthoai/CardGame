@@ -13,15 +13,27 @@ import com.example.demo.domain.GameAccount;
 public class GameController {
 	@Autowired
 	GameRepository gameRepo;
-	
+
 	@GetMapping("/start/{username}")
 	public ResponseEntity<?> startGame(@PathVariable(required = true) String username) {
 		try {
 			GameAccount game = gameRepo.handleResult(username);
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(game);
+			if (game == null) {
+				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Max ticket");
+			}
+			return ResponseEntity.status(HttpStatus.OK).body(game);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
 	}
-
+	
+	@GetMapping("/ranks")
+	public ResponseEntity<?> getRanks() {
+		try {
+			return ResponseEntity.status(HttpStatus.OK).body(gameRepo.getTop10());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
+	}
+	
 }

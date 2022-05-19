@@ -7,7 +7,7 @@ public class GameConfig {
 	public final Integer awardThreeCard;
 	public final Integer bonusThreeCard;
 	public final Integer maxTicket;
-	
+
 	public GameConfig(int appId, int cardsSize, int awardThreeCard, int bonusThreeCard, int maxTicket) {
 		this.appId = appId;
 		this.cardsSize = cardsSize;
@@ -15,5 +15,4 @@ public class GameConfig {
 		this.bonusThreeCard = bonusThreeCard;
 		this.maxTicket = maxTicket;
 	}
-
 }
